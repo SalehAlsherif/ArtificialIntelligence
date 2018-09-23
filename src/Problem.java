@@ -24,25 +24,27 @@ public class Problem {
 		for (int i = 0; i < this.operators.length; i++) {
 			if (this.operators[i].equals("North")) {
 				if (n.state.JonC - 1 >= 0
-						&& n.state.grid[n.state.JonR][n.state.JonC - 1] == 'D') {				
-					State newState= n.state.clone();
+						&& n.state.grid[n.state.JonR][n.state.JonC - 1] == 'D') {
+					State newState = n.state.clone();
 					newState.grid[n.state.JonR][n.state.JonC - 1] = 'J';
-					if (n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
+					if (n.parentNode != null
+							&& n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
 						newState.grid[n.state.JonR][n.state.JonC] = 'D';
 					else
 						newState.grid[n.state.JonR][n.state.JonC] = '.';
-					newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;	
+					newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
 					expansion.add(new Node(newState, n, "North", n.depth + 1,
-							n.pathCost + 1));			
+							n.pathCost + 1));
 				} else {
-					
+
 					if (n.state.JonC - 1 >= 0
 							&& n.state.grid[n.state.JonR][n.state.JonC - 1] != 'O'
 							&& n.state.grid[n.state.JonR][n.state.JonC - 1] != 'W') {
-						
+
 						State newState = n.state.clone();
 						newState.grid[n.state.JonR][n.state.JonC - 1] = 'J';
-						if (n.parentNode!=null&&n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
+						if (n.parentNode != null
+								&& n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
 							newState.grid[n.state.JonR][n.state.JonC] = 'D';
 						else
 							newState.grid[n.state.JonR][n.state.JonC] = '.';
@@ -59,7 +61,8 @@ public class Problem {
 						&& n.state.grid[n.state.JonR][n.state.JonC + 1] == 'D') {
 					State newState = n.state.clone();
 					newState.grid[n.state.JonR][n.state.JonC + 1] = 'J';
-					if (n.parentNode!=null&&n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
+					if (n.parentNode != null
+							&& n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
 						newState.grid[n.state.JonR][n.state.JonC] = 'D';
 					else
 						newState.grid[n.state.JonR][n.state.JonC] = '.';
@@ -70,10 +73,11 @@ public class Problem {
 					if (n.state.JonC + 1 < n.state.grid[0].length
 							&& n.state.grid[n.state.JonR][n.state.JonC + 1] != 'O'
 							&& n.state.grid[n.state.JonR][n.state.JonC + 1] != 'W') {
-						
+
 						State newState = n.state.clone();
 						newState.grid[n.state.JonR][n.state.JonC + 1] = 'J';
-						if (n.parentNode!=null&&n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
+						if (n.parentNode != null
+								&& n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
 							newState.grid[n.state.JonR][n.state.JonC] = 'D';
 						else
 							newState.grid[n.state.JonR][n.state.JonC] = '.';
@@ -91,7 +95,8 @@ public class Problem {
 						&& n.state.grid[n.state.JonR + 1][n.state.JonC] == 'D') {
 					State newState = n.state.clone();
 					newState.grid[n.state.JonR + 1][n.state.JonC] = 'J';
-					if (n.parentNode!=null&&n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
+					if (n.parentNode != null
+							&& n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
 						newState.grid[n.state.JonR][n.state.JonC] = 'D';
 					else
 						newState.grid[n.state.JonR][n.state.JonC] = '.';
@@ -104,7 +109,8 @@ public class Problem {
 							&& n.state.grid[n.state.JonR + 1][n.state.JonC] != 'W') {
 						State newState = n.state.clone();
 						newState.grid[n.state.JonR + 1][n.state.JonC] = 'J';
-						if (n.parentNode!=null&&n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
+						if (n.parentNode != null
+								&& n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
 							newState.grid[n.state.JonR][n.state.JonC] = 'D';
 						else
 							newState.grid[n.state.JonR][n.state.JonC] = '.';
@@ -121,7 +127,8 @@ public class Problem {
 						&& n.state.grid[n.state.JonR - 1][n.state.JonC] == 'D') {
 					State newState = n.state.clone();
 					newState.grid[n.state.JonR - 1][n.state.JonC] = 'J';
-					if (n.parentNode!=null&&n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
+					if (n.parentNode != null
+							&& n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
 						newState.grid[n.state.JonR][n.state.JonC] = 'D';
 					else
 						newState.grid[n.state.JonR][n.state.JonC] = '.';
@@ -135,7 +142,8 @@ public class Problem {
 							&& n.state.grid[n.state.JonR - 1][n.state.JonC] != 'W') {
 						State newState = n.state.clone();
 						newState.grid[n.state.JonR - 1][n.state.JonC] = 'J';
-						if (n.parentNode!=null&&n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
+						if (n.parentNode != null
+								&& n.parentNode.state.grid[n.state.JonR][n.state.JonC] == 'D')
 							newState.grid[n.state.JonR][n.state.JonC] = 'D';
 						else
 							newState.grid[n.state.JonR][n.state.JonC] = '.';
@@ -148,7 +156,7 @@ public class Problem {
 
 			}
 			if (this.operators[i].equals("Kill")) {
-			
+
 				State newState = n.state.clone();
 				newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces - 1;
 				if (n.state.JonR - 1 >= 0
