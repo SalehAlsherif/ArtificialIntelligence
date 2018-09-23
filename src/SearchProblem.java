@@ -1,5 +1,6 @@
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class SearchProblem {
@@ -19,11 +20,11 @@ public class SearchProblem {
 	static State goalTest;
 	static State initialState;
 
-	static Queue<Node> Q;
+	static Queue<Node> Q= new LinkedList<Node>();
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		GenGrid(3, 3, 5, 2);
+		GenGrid(1, 3, 5, 10);
 		// Set of Actions
 		operators[0] = "North";
 
@@ -34,6 +35,26 @@ public class SearchProblem {
 		operators[3] = "West";
 		
 		operators[4] = "Kill";
+		//Initial State Creation
+		initialState = new State(grid);
+		initialState.numberOfDragonGlassPieces = numberOfDragonGlassPieces;
+		initialState.JonC=jonColumn;
+		initialState.JonR=jonRow;
+
+		// goal test is when all w's disappear		
+		State clonedState = initialState.clone();		
+		for (int i = 0; i < clonedState.grid.length; i++) {
+			for (int j = 0; j < clonedState.grid[i].length; j++) {
+				if (clonedState.grid[i][j] == 'W') {
+					clonedState.grid[i][j] = '.';
+				}
+			}
+		}
+		goalTest = clonedState;
+
+		// Creating a Problem instant
+		Problem p = new Problem(operators, initialState, goalTest);
+		
 		PrintWriter pw = new PrintWriter(System.out);
 		for (int i = 0; i < grid.length; i++) {
 			for (int j = 0; j < grid[i].length; j++) {
@@ -41,22 +62,7 @@ public class SearchProblem {
 			}
 			pw.println("");
 		}
-		// goal test is when all w's disappear
-		char[][] clonedGrid = grid.clone();
-		
-		for (int i = 0; i < clonedGrid.length; i++) {
-			for (int j = 0; j < clonedGrid[i].length; j++) {
-				if (clonedGrid[i][j] == 'W') {
-					clonedGrid[i][j] = '.';
-				}
-			}
-		}
-		goalTest = new State(clonedGrid);
-		initialState = new State(grid);
-		initialState.numberOfDragonGlassPieces = numberOfDragonGlassPieces;
-		// generateStateSpace();
-		Problem p = new Problem(operators, initialState, goalTest, stateSpace);
-
+		System.out.println(GENERAL_SEARCH(p));
 
 		pw.flush();
 		pw.close();
@@ -85,8 +91,8 @@ public class SearchProblem {
 		for (int i = 0; i < whiteWalkers; i++) {
 			int randomColumn = (int) (Math.random() * sizeC);
 			int randomRow = (int) (Math.random() * sizeR);
-			if (grid[randomColumn][randomRow] == '.') {
-				grid[randomColumn][randomRow] = 'W';
+			if (grid[randomRow][randomColumn] == '.') {
+				grid[randomRow][randomColumn] = 'W';
 			} else {
 				i--;
 			}
@@ -97,8 +103,8 @@ public class SearchProblem {
 		for (int i = 0; i < dragonStones; i++) {
 			int randomColumn = (int) (Math.random() * sizeC);
 			int randomRow = (int) (Math.random() * sizeR);
-			if (grid[randomColumn][randomRow] == '.') {
-				grid[randomColumn][randomRow] = 'D';
+			if (grid[randomRow][randomColumn] == '.') {
+				grid[randomRow][randomColumn] = 'D';
 			} else {
 				i--;
 			}
@@ -109,8 +115,8 @@ public class SearchProblem {
 		for (int i = 0; i < obstacles; i++) {
 			int randomColumn = (int) (Math.random() * sizeC);
 			int randomRow = (int) (Math.random() * sizeR);
-			if (grid[randomColumn][randomRow] == '.') {
-				grid[randomColumn][randomRow] = 'O';
+			if (grid[randomRow][randomColumn] == '.') {
+				grid[randomRow][randomColumn] = 'O';
 			} else {
 				i--;
 			}
@@ -120,6 +126,7 @@ public class SearchProblem {
 
 	public static Node Make_Node(State s, Node parent, String operator,
 			int depth, int pathCost) {
+		
 		return new Node(s, parent, operator, depth, pathCost);
 	}
 
@@ -131,7 +138,8 @@ public class SearchProblem {
 			if (p.isGoalTest(First.state)) {
 				return First;
 			}
-
+			ArrayList<Node> expansion=p.Expand(First);			
+			Q.addAll(expansion);
 		}
 		return null;// Failure
 	}
