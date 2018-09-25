@@ -28,16 +28,16 @@ public class SearchProblem {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-	//	GenGrid(0, 0, 2, 12);
-		grid=new char[2][2];
-		numberOfDragonGlassPieces=1;
-		jonRow=1;
-		jonColumn=1;
-		grid[1][1]='J';
-		grid[0][0]='W';
-		grid[1][0]='.';
-		
-		grid[0][1]='.';
+		GenGrid(0, 0, 2, 12);
+//		grid=new char[2][2];
+//		numberOfDragonGlassPieces=1;
+//		jonRow=1;
+//		jonColumn=1;
+//		grid[1][1]='J';
+//		grid[0][0]='W';
+//		grid[1][0]='.';
+//		
+//		grid[0][1]='.';
 //		grid[1][0]='.';
 //		grid[1][1]='.';
 //		grid[1][2]='.';
@@ -90,36 +90,69 @@ public class SearchProblem {
 			}
 			pw.println("");
 		}
-		 System.out.println(GENERAL_SEARCH(p, searchType.BF).operator);
+		gridFromBitSet(grid.length,grid[0].length,BitSetFromgrid(grid));
+		
+	//	 System.out.println(GENERAL_SEARCH(p, searchType.BF).operator);
 
 		pw.flush();
 		pw.close();
 
 	}
+	public static BitSet BitSetFromgrid(char[][] targetGrid) {
+		BitSet b=new BitSet(3*targetGrid.length*targetGrid[0].length);
+		for (int i = 0; i < targetGrid.length; i++) {
+			for (int j = 0; j < targetGrid[i].length; j++) {
+				if(targetGrid[i][j]=='J'){
+					b.set(i*targetGrid.length+j+2);
+				}
+				if(targetGrid[i][j]=='D'){
+					b.set(i*targetGrid.length+j+2);
+					b.set(i*targetGrid.length+j+1);
+				}
+				if(targetGrid[i][j]=='W'){
+					b.set(i*targetGrid.length+j);
+				}
+				if(targetGrid[i][j]=='O'){
+					b.set(i*targetGrid.length+j);
+					b.set(i*targetGrid.length+j+2);
+				}
+			}
 
+		}
+		System.out.println(b.get(0));
+
+		System.out.println(b.toString());
+		return b;	
+	}
+	
 	public static void gridFromBitSet(int R, int C, BitSet b) {
 		char[][] newgrid=new char[R][C];
-		
-		for (int i = 0; i < b.size(); i += 3) {
+		int size=newgrid.length*newgrid[0].length*3;
+		for (int i = 0; i < size; i += 3) {
 			if (!b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
-				System.out.print(".");
+				newgrid[(i/3)/R][(i/3)%C]='.';
 			}
 			if (!b.get(i) && !b.get(i + 1) && b.get(i + 2)) {
-				System.out.print("J");
+				newgrid[(i/3)/R][(i/3)%C]='J';
 			}
 			if (!b.get(i) && b.get(i + 1) && b.get(i + 2)) {
-				System.out.print("D");
+				newgrid[(i/3)/R][(i/3)%C]='D';
 			}
 			if (b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
-				System.out.print("W");
+				newgrid[(i/3)/R][(i/3)%C]='W';
 			}
 			if (b.get(i) && !b.get(i + 1) && b.get(i + 2)) {
-				System.out.print("O");
+				newgrid[(i/3)/R][(i/3)%C]='O';
 			}
-			if (i % C == 0)
-				System.out.println("");
 		}
-
+		for (int i = 0; i < newgrid.length; i++) {
+			for (int j = 0; j < newgrid[i].length; j++) {
+				System.out.print(newgrid[i][j] + " ");
+			}
+			System.out.println("");
+		}
+		System.out.println("");
+		System.out.println("");
 	}
 
 	public static void GenGrid(int maxLimitGrid, int maxLimitWhiteWalkers,
@@ -136,7 +169,6 @@ public class SearchProblem {
 		// O as 101
 
 		grid = new char[sizeR][sizeC];
-
 		// initially everything is empty i.e. '.'
 		for (int i = 0; i < grid.length; i++) {
 			for (int j = 0; j < grid[i].length; j++) {
