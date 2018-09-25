@@ -9,7 +9,6 @@ public class Node {
 		this.parentNode=parentNode;
 		this.operator=operator;
 		this.depth=depth;
-		this.parentNode=parentNode;
 		this.pathCost=pathCost;
 	}
 	

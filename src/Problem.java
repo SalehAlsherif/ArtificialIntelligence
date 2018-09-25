@@ -158,25 +158,29 @@ public class Problem {
 			if (this.operators[i].equals("Kill")) {
 
 				State newState = n.state.clone();
-				newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces - 1;
-				if (n.state.JonR - 1 >= 0
-						&& n.state.grid[n.state.JonR - 1][n.state.JonC] == 'W') {
-					newState.grid[n.state.JonR - 1][n.state.JonC] = '.';
-				}
-				if (n.state.JonR + 1 < n.state.grid.length
-						&& n.state.grid[n.state.JonR + 1][n.state.JonC] == 'W') {
-					newState.grid[n.state.JonR + 1][n.state.JonC] = '.';
-				}
-				if (n.state.JonC - 1 >= 0
-						&& n.state.grid[n.state.JonR][n.state.JonC - 1] == 'W') {
-					newState.grid[n.state.JonR][n.state.JonC - 1] = '.';
-				}
-				if (n.state.JonR + 1 < n.state.grid[0].length
-						&& n.state.grid[n.state.JonR][n.state.JonC + 1] == 'W') {
-					newState.grid[n.state.JonR][n.state.JonC + 1] = '.';
-				}
-				expansion.add(new Node(newState, n, "Kill", n.depth + 1,
-						n.pathCost + 1));
+				if(newState.numberOfDragonGlassPieces >0)
+				{	
+					newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces - 1;
+
+					if (n.state.JonR - 1 >= 0
+							&& n.state.grid[n.state.JonR - 1][n.state.JonC] == 'W') {
+						newState.grid[n.state.JonR - 1][n.state.JonC] = '.';
+					}
+					if (n.state.JonR + 1 < n.state.grid.length
+							&& n.state.grid[n.state.JonR + 1][n.state.JonC] == 'W') {
+						newState.grid[n.state.JonR + 1][n.state.JonC] = '.';
+					}
+					if (n.state.JonC - 1 >= 0
+							&& n.state.grid[n.state.JonR][n.state.JonC - 1] == 'W') {
+						newState.grid[n.state.JonR][n.state.JonC - 1] = '.';
+					}
+					if (n.state.JonR + 1 < n.state.grid[0].length
+							&& n.state.grid[n.state.JonR][n.state.JonC + 1] == 'W') {
+						newState.grid[n.state.JonR][n.state.JonC + 1] = '.';
+					}
+					expansion.add(new Node(newState, n, "Kill", n.depth + 1,
+							n.pathCost + 1));	
+				}				
 			}
 
 		}
@@ -186,7 +190,8 @@ public class Problem {
 	public boolean isGoalTest(State s) {
 		for (int i = 0; i < s.grid.length; i++) {
 			for (int j = 0; j < s.grid[i].length; j++) {
-				if (s.grid[i][j] != goalTest.grid[i][j]) {
+				if (s.grid[i][j] != goalTest.grid[i][j] && s.grid[i][j] != 'J'
+						&& goalTest.grid[i][j] != 'J') {
 					return false;
 				}
 			}
