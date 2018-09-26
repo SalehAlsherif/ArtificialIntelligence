@@ -98,8 +98,8 @@ public class SearchProblem {
 		pw.close();
 
 	}
-	public static BitSet BitSetFromgrid(char[][] targetGrid) {
-		BitSet b=new BitSet(3*targetGrid.length*targetGrid[0].length);
+	public static BitField BitSetFromgrid(char[][] targetGrid) {
+		BitField b=new BitField(3*targetGrid.length*targetGrid[0].length);
 		for (int i = 0; i < targetGrid.length; i++) {
 			for (int j = 0; j < targetGrid[i].length; j++) {
 				if(targetGrid[i][j]=='J'){
@@ -120,30 +120,35 @@ public class SearchProblem {
 
 		}
 		System.out.println(b.get(0));
+		System.out.println(b.get(1));
+		System.out.println(b.get(2));
+		System.out.println(b.get(3));
+		System.out.println(b.get(4));
+		System.out.println(b.get(5));
 
-		System.out.println(b.toString());
 		return b;	
 	}
 	
-	public static void gridFromBitSet(int R, int C, BitSet b) {
+	public static void gridFromBitSet(int R, int C, BitField b) {
 		char[][] newgrid=new char[R][C];
 		int size=newgrid.length*newgrid[0].length*3;
 		for (int i = 0; i < size; i += 3) {
 			if (!b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
 				newgrid[(i/3)/R][(i/3)%C]='.';
-			}
+			}else
 			if (!b.get(i) && !b.get(i + 1) && b.get(i + 2)) {
 				newgrid[(i/3)/R][(i/3)%C]='J';
-			}
+			}else
 			if (!b.get(i) && b.get(i + 1) && b.get(i + 2)) {
 				newgrid[(i/3)/R][(i/3)%C]='D';
-			}
+			}else
 			if (b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
 				newgrid[(i/3)/R][(i/3)%C]='W';
-			}
+			}else
 			if (b.get(i) && !b.get(i + 1) && b.get(i + 2)) {
 				newgrid[(i/3)/R][(i/3)%C]='O';
-			}
+			}else
+				newgrid[(i/3)/R][(i/3)%C]='X';
 		}
 		for (int i = 0; i < newgrid.length; i++) {
 			for (int j = 0; j < newgrid[i].length; j++) {
