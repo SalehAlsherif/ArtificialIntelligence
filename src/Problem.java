@@ -187,6 +187,7 @@ public class Problem {
 		return expansion;
 	}
 
+	
 	public boolean isGoalTest(State s) {
 		for (int i = 0; i < s.grid.length; i++) {
 			for (int j = 0; j < s.grid[i].length; j++) {

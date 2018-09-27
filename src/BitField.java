@@ -49,6 +49,7 @@ public final class BitField {
         return max << ADDRESS_BITS;
     }
 
+
     /**
      * Get the bit at the given index.
      *
