@@ -64,20 +64,22 @@ public class SearchProblem {
 
 		operators[4] = "Kill";
 		// Initial State Creation
-		initialState = new State(grid);
+		initialState = new State(BitSetFromgrid(grid));
 		initialState.numberOfDragonGlassPieces = numberOfDragonGlassPieces;
 		initialState.JonC = jonColumn;
 		initialState.JonR = jonRow;
 
 		// goal test is when all w's disappear
 		State clonedState = initialState.clone();
-		for (int i = 0; i < clonedState.grid.length; i++) {
-			for (int j = 0; j < clonedState.grid[i].length; j++) {
-				if (clonedState.grid[i][j] == 'W') {
-					clonedState.grid[i][j] = '.';
+		char[][]clonedgrid=gridFromBitSet(grid.length,grid[0].length,clonedState.grid);
+		for (int i = 0; i < clonedgrid.length; i++) {
+			for (int j = 0; j < clonedgrid.length; j++) {
+				if (clonedgrid[i][j] == 'W') {
+					clonedgrid[i][j] = '.';
 				}
 			}
 		}
+		clonedState.grid=BitSetFromgrid(clonedgrid);
 		goalTest = clonedState;
 		//Encoding the state into the BitField .
 		gridFromBitSet(grid.length,grid[0].length,BitSetFromgrid(grid));
@@ -92,15 +94,13 @@ public class SearchProblem {
 			}
 			pw.println("");
 		}
-		
 		// System.out.println(GENERAL_SEARCH(p, searchType.BF).operator);
-
 		pw.flush();
 		pw.close();
 
 	}
 	public static BitField BitSetFromgrid(char[][] targetGrid) {
-		BitField b=new BitField(3*targetGrid.length*targetGrid[0].length);
+		BitField b=new BitField(1);
 		for (int i = 0; i < targetGrid.length; i++) {
 			for (int j = 0; j < targetGrid[i].length; j++) {
 				if(targetGrid[i][j]=='.'){
@@ -181,14 +181,14 @@ public class SearchProblem {
 //
 //		
 //		System.out.println("");
-//		for (int i = 0; i < newgrid.length; i++) {
-//			for (int j = 0; j < newgrid[i].length; j++) {
-//				System.out.print(newgrid[i][j] + " ");
-//			}
-//			System.out.println("");
-//		}
-//		System.out.println("");
-//		System.out.println("");
+		for (int i = 0; i < newgrid.length; i++) {
+			for (int j = 0; j < newgrid[i].length; j++) {
+				System.out.print(newgrid[i][j] + " ");
+			}
+			System.out.println("");
+		}
+		System.out.println("");
+		System.out.println("");
 		return newgrid;
 	}
 

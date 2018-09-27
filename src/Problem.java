@@ -189,14 +189,56 @@ public class Problem {
 
 	
 	public boolean isGoalTest(State s) {
-		for (int i = 0; i < s.grid.length; i++) {
-			for (int j = 0; j < s.grid[i].length; j++) {
-				if (s.grid[i][j] != goalTest.grid[i][j] && s.grid[i][j] != 'J'
-						&& goalTest.grid[i][j] != 'J') {
+		char[][]clonedGrid=gridFromBitSet(s.row,s.column,s.grid);
+		char[][]goalGrid=gridFromBitSet(s.row,s.column,goalTest.grid);
+		for (int i = 0; i < clonedGrid.length; i++) {
+			for (int j = 0; j < clonedGrid.length; j++) {
+				if (clonedGrid[i][j] != goalGrid[i][j] && clonedGrid[i][j] != 'J'
+						&& goalGrid[i][j] != 'J') {
 					return false;
 				}
 			}
 		}
 		return true;
+	}
+	public static char[][] gridFromBitSet(int R, int C, BitField b) {
+		char[][] newgrid=new char[R][C];
+		int size=newgrid.length*newgrid[0].length*3;
+		for (int i = 0; i < size; i += 3) {
+			if (!b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
+				newgrid[(i/3)/R][(i/3)%C]='.';
+			}else
+			if (!b.get(i) && !b.get(i + 1) && b.get(i + 2)) {
+				newgrid[(i/3)/R][(i/3)%C]='J';
+			}else
+			if (!b.get(i) && b.get(i + 1) && !b.get(i + 2)) {
+				newgrid[(i/3)/R][(i/3)%C]='D';
+			}else
+			if (!b.get(i) && b.get(i + 1) && b.get(i + 2)) {
+				newgrid[(i/3)/R][(i/3)%C]='W';
+			}else
+			if (b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
+				newgrid[(i/3)/R][(i/3)%C]='O';
+			}else
+				newgrid[(i/3)/R][(i/3)%C]='X';
+		}
+//		System.out.println("recieved bitField");
+//		for(int i=0;i<3*newgrid.length*newgrid[0].length;i++){
+//			System.out.print(b.get(i)+" ");
+//			if(i%3==2)
+//				System.out.println("");
+//		}
+//
+//		
+//		System.out.println("");
+		for (int i = 0; i < newgrid.length; i++) {
+			for (int j = 0; j < newgrid[i].length; j++) {
+				System.out.print(newgrid[i][j] + " ");
+			}
+			System.out.println("");
+		}
+		System.out.println("");
+		System.out.println("");
+		return newgrid;
 	}
 }
