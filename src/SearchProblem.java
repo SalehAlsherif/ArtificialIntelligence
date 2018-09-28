@@ -28,7 +28,7 @@ public class SearchProblem {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		GenGrid(0, 0, 2, 12);
+		GenGrid(0, 8, 2, 3);
 		// Set of Actions
 		operators[0] = "North";
 
@@ -46,13 +46,13 @@ public class SearchProblem {
 		initialState.JonR = jonRow;
 		initialState.row = grid.length;
 		initialState.column = grid[0].length;
-
+		initialState.numberOfDragonGlassPieces = 0;
 		// goal test is when all w's disappear
 		State clonedState = initialState.clone();
 		char[][] clonedgrid = gridFromBitField(grid.length, grid[0].length,
 				clonedState.grid);
 		for (int i = 0; i < clonedgrid.length; i++) {
-			for (int j = 0; j < clonedgrid.length; j++) {
+			for (int j = 0; j < clonedgrid[0].length; j++) {
 				if (clonedgrid[i][j] == 'W') {
 					clonedgrid[i][j] = '.';
 				}
@@ -65,22 +65,26 @@ public class SearchProblem {
 
 		// Creating a Problem instant
 		Problem p = new Problem(operators, initialState, goalTest);
-
-		PrintWriter pw = new PrintWriter(System.out);
+		
+		String gridString = "";
 		for (int i = 0; i < grid.length; i++) {
 			for (int j = 0; j < grid[i].length; j++) {
-				pw.print(grid[i][j] + " ");
+				gridString += grid[i][j] + " ";
 			}
-			pw.println("");
+			gridString += "\n";
 		}
-		System.out.println(GENERAL_SEARCH(p, searchType.BF).operator);
-		pw.flush();
-		pw.close();
-
+		System.out.println(gridString);
+		visualize(GENERAL_SEARCH(p, searchType.BF));
 	}
-
+	// I'm going to assume a bitFeild that better represent the grid the size
+			// of the set is 3*sizeR*sizeC
+			// I will consider encoding for the empty cell as 000
+			// jon snow as 001
+			// D as 010
+			// W as 011
+			// O as 100
 	public static BitField BitFieldFromgrid(char[][] targetGrid) {
-		BitField b = new BitField(1);
+		BitField b = new BitField(2);
 		for (int i = 0; i < targetGrid.length; i++) {
 			for (int j = 0; j < targetGrid[i].length; j++) {
 				if (targetGrid[i][j] == '.') {
@@ -138,14 +142,7 @@ public class SearchProblem {
 			int maxLimitDragonStone, int maxLimitObstacle) {
 		int sizeC = 4 + (int) (Math.random() * maxLimitGrid);// size of columns
 		int sizeR = 4 + (int) (Math.random() * maxLimitGrid);// size of rows
-		// I'm going to assume a bitSet that better represent the grid the size
-		// of the set is 3*sizeR*sizeC
-		BitSet b = new BitSet(3 * sizeC * sizeR);
-		// I will consider encoding for the empty cell as 000
-		// jon snow as 001
-		// D as 010
-		// W as 011
-		// O as 100
+		
 
 		grid = new char[sizeR][sizeC];
 		// initially everything is empty i.e. '.'
@@ -154,14 +151,10 @@ public class SearchProblem {
 				grid[i][j] = '.';
 			}
 		}
-		// loop over BitSet
-		// bit set is all 0's
-
 		// Jon Snow initial Position
 		jonColumn = sizeC - 1;
 		jonRow = sizeR - 1;
 		// position in bit set is
-		b.set(b.size() - 1);
 		grid[jonRow][jonColumn] = 'J';
 
 		// Placement of White Walkers
@@ -200,7 +193,19 @@ public class SearchProblem {
 				i--;
 			}
 		}
+		
 
+	}
+	public static void visualize (Node n){
+		String res="";
+		res+=" "+n.operator;
+		Node p=n.parentNode;
+		while(p!=null){
+			res+=" "+p.operator;
+			p=p.parentNode;
+		}
+		System.out.println(res);
+		
 	}
 
 	public static Node Make_Node(State s, Node parent, String operator,
@@ -210,17 +215,46 @@ public class SearchProblem {
 	}
 
 	public static Node BF(Problem p) {
-
 		Queue<Node> Q = (Queue<Node>) new LinkedList<Node>();
 		Q.add(Make_Node(p.initialState, null, null, 0, 0));
-		while (!((Queue<Node>) Q).isEmpty()) {
+
+		int count = 0;
+		while (!((Queue<Node>) Q).isEmpty()) {;
+
 			Node First = Q.remove();
 			if (p.isGoalTest(First.state)) {
+				System.out.println("Sucess State");
+				String gridString = "";
+				for (int i = 0; i < 4; i++) {
+					for (int k = 0; k < 4; k++) {
+						gridString += gridFromBitField(4, 4, First.state.grid)[i][k] + " ";
+					}
+					gridString += "\n";
+				}
+				System.out.println(gridString);
 				return First;
 			}
 			ArrayList<Node> expansion = p.Expand(First);
-			for (int i = 0; i < expansion.size(); i++)
+			
+			if (expansion.isEmpty()) {
+				System.out.println("No availble moves!");
+				return First;
+			}
+
+			for (int i = 0; i < expansion.size(); i++) {
 				Q.add(expansion.get(i));
+			}
+//			System.out.println("Node In Queue "+ count++);
+//			String gridString = "";
+//			for (int i = 0; i < 4; i++) {
+//				for (int k = 0; k < 4; k++) {
+//					gridString += gridFromBitField(4, 4, Q.peek().state.grid)[i][k] + " ";
+//				}
+//				gridString += "\n";
+//			}
+//			System.out.println(gridString);
+//			System.out.println("Number of dragonglass "+Q.peek().state.numberOfDragonGlassPieces+'\n');
+
 		}
 		return null;// Failure
 	}
