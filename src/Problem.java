@@ -74,7 +74,7 @@ public class Problem {
 		return b;
 	}
 
-	public ArrayList<Node> Expand2(Node n) {
+	public ArrayList<Node> Expand21(Node n) {
 		ArrayList<Node> expansion = new ArrayList<Node>();
 		char[][] gridOfNode = gridFromBitField(n.state.row, n.state.column,
 				n.state.grid);
@@ -250,7 +250,7 @@ public class Problem {
 
 	// State Space or Transition function
 
-	public ArrayList<Node> Expand(Node n) {
+	public ArrayList<Node> Expand2(Node n) {
 		ArrayList<Node> expansion = new ArrayList<Node>();
 		char[][] gridOfNode = gridFromBitField(n.state.row, n.state.column, n.state.grid);
 		if (!(n.state.JonR - 1 < 0)) {
@@ -416,6 +416,277 @@ public class Problem {
 	}
 
 	// State Space or Transition function
+	public ArrayList<Node> Expand(Node n) {
+		char[][] gridOfNode = gridFromBitField(n.state.row, n.state.column, n.state.grid);
+		ArrayList<Node> expansion = new ArrayList<Node>();
+		for (int i = 0; i < this.operators.length; i++) {
+			if (this.operators[i].equals("North")) {
+				if (n.state.JonR - 1 >= 0
+						&& gridOfNode[n.state.JonR - 1][n.state.JonC] == 'D') {
+					State newState = n.state.clone();
+					char[][] gridOfClonedNode = gridFromBitField(newState.row,
+							newState.column, newState.grid);
+
+					newState.JonC = n.state.JonC;
+					newState.JonR = n.state.JonR - 1;
+
+					gridOfClonedNode[n.state.JonR - 1][n.state.JonC] = 'J';
+
+
+					if (n.parentNode != null) {
+						char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
+								n.parentNode.state.column, n.parentNode.state.grid);
+						if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
+						} else {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+						}
+					} else {
+						gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+					}
+					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
+					expansion.add(new Node(newState, n, "North", n.depth + 1, n.pathCost + 1));
+
+				} else {
+					if (n.state.JonR - 1 >= 0
+							&& gridOfNode[n.state.JonR - 1][n.state.JonC] != 'O'
+							&& gridOfNode[n.state.JonR - 1][n.state.JonC] != 'W') {
+
+						State newState = n.state.clone();
+						char[][] gridOfClonedNode = gridFromBitField(
+								newState.row, newState.column, newState.grid);
+						newState.JonC = n.state.JonC;
+						newState.JonR = n.state.JonR - 1;
+
+
+						gridOfClonedNode[n.state.JonR - 1][n.state.JonC] = 'J';
+						if (n.parentNode != null) {
+							char[][] gridOfClonedParentNode = gridFromBitField(
+									n.parentNode.state.row,
+									n.parentNode.state.column,
+									n.parentNode.state.grid);
+
+							if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
+								gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
+							} else {
+								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+							}
+						} else {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+						}
+						newState.grid = BitFieldFromgrid(gridOfClonedNode);
+						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces;
+						expansion.add(new Node(newState, n, "North", n.depth + 1, n.pathCost + 1));
+					}
+				}
+
+			}
+			if (this.operators[i].equals("South")) {
+
+				if (n.state.JonR + 1 < gridOfNode.length
+						&& gridOfNode[n.state.JonR + 1][n.state.JonC] == 'D') {
+					State newState = n.state.clone();
+					char[][] gridOfClonedNode = gridFromBitField(newState.row,
+							newState.column, newState.grid);
+					newState.JonC = n.state.JonC;
+					newState.JonR = n.state.JonR + 1;
+					gridOfClonedNode[n.state.JonR + 1][n.state.JonC] = 'J';
+					if (n.parentNode != null) {
+						char[][] gridOfClonedParentNode = gridFromBitField(
+								n.parentNode.state.row,
+								n.parentNode.state.column,
+								n.parentNode.state.grid);
+
+						if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
+						} else {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+						}
+					} else {
+						gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+					}
+					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
+					expansion.add(new Node(newState, n, "South", n.depth + 1, n.pathCost + 1));
+				} else {
+
+					if (n.state.JonR + 1 < gridOfNode.length
+							&& gridOfNode[n.state.JonR + 1][n.state.JonC] != 'O'
+							&& gridOfNode[n.state.JonR + 1][n.state.JonC] != 'W') {
+
+						State newState = n.state.clone();
+						char[][] gridOfClonedNode = gridFromBitField(
+								newState.row, newState.column, newState.grid);
+						newState.JonC = n.state.JonC;
+						newState.JonR = n.state.JonR + 1;
+						gridOfClonedNode[n.state.JonR + 1][n.state.JonC] = 'J';
+						if (n.parentNode != null) {
+							char[][] gridOfClonedParentNode = gridFromBitField(
+									n.parentNode.state.row,
+									n.parentNode.state.column,
+									n.parentNode.state.grid);
+
+							if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
+								gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
+							} else {
+								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+							}
+						} else {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+						}
+						newState.grid = BitFieldFromgrid(gridOfClonedNode);
+						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces;
+						expansion.add(new Node(newState, n, "South",
+								n.depth + 1, n.pathCost + 1));
+
+					}
+				}
+
+			}
+			if (this.operators[i].equals("East")) {
+				if (n.state.JonC + 1 < gridOfNode[0].length
+						&& gridOfNode[n.state.JonR][n.state.JonC + 1] == 'D') {
+
+					State newState = n.state.clone();
+					char[][] gridOfClonedNode = gridFromBitField(newState.row,
+							newState.column, newState.grid);
+					newState.JonC = n.state.JonC + 1;
+					newState.JonR = n.state.JonR;
+					gridOfClonedNode[n.state.JonR][n.state.JonC + 1] = 'J';
+
+					if (n.parentNode != null) {
+						char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
+								n.parentNode.state.column, n.parentNode.state.grid);
+						if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D')
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
+						else {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+						}
+					} else {
+						gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+					}
+					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
+					expansion.add(new Node(newState, n, "East", n.depth + 1, n.pathCost + 1));
+				} else {
+					if (n.state.JonC + 1 < gridOfNode[0].length
+							&& gridOfNode[n.state.JonR][n.state.JonC + 1] != 'O'
+							&& gridOfNode[n.state.JonR][n.state.JonC + 1] != 'W') {
+						State newState = n.state.clone();
+						
+						char[][] gridOfClonedNode = gridFromBitField(
+								newState.row, newState.column, newState.grid);
+						
+						newState.JonC = n.state.JonC + 1;
+						newState.JonR = n.state.JonR;
+						gridOfClonedNode[n.state.JonR][n.state.JonC + 1] = 'J';
+
+
+						if (n.parentNode != null) {
+							char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
+									n.parentNode.state.column, n.parentNode.state.grid);
+							if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
+								gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
+							} else {
+								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+							}
+						} else {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+						}
+						newState.grid = BitFieldFromgrid(gridOfClonedNode);
+						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces;
+						expansion.add(new Node(newState, n, "East", n.depth + 1, n.pathCost + 1));
+					}
+				}
+
+			}
+			if (this.operators[i].equals("West")) {
+
+				if (n.state.JonC - 1 >= 0
+						&& gridOfNode[n.state.JonR ][n.state.JonC- 1] == 'D') {
+					State newState = n.state.clone();
+					char[][] gridOfClonedNode = gridFromBitField(newState.row,
+							newState.column, newState.grid);
+
+					newState.JonC = n.state.JonC - 1;
+					newState.JonR = n.state.JonR;
+					gridOfClonedNode[n.state.JonR][n.state.JonC- 1] = 'J';
+
+					if (n.parentNode != null) {
+						char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
+								n.parentNode.state.column, n.parentNode.state.grid);
+						if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
+						} else {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+						}
+
+					} else {
+						gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+					}
+					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
+					expansion.add(new Node(newState, n, "West", n.depth + 1, n.pathCost + 1));
+				} else {
+					if (n.state.JonC - 1 >= 0
+							&& gridOfNode[n.state.JonR ][n.state.JonC- 1] != 'O'
+							&& gridOfNode[n.state.JonR ][n.state.JonC- 1] != 'W') {
+						State newState = n.state.clone();
+						char[][] gridOfClonedNode = gridFromBitField(
+								newState.row, newState.column, newState.grid);
+						newState.JonC = n.state.JonC - 1;
+						newState.JonR = n.state.JonR;
+						gridOfClonedNode[n.state.JonR][n.state.JonC- 1] = 'J';
+
+						if (n.parentNode != null) {
+							char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
+									n.parentNode.state.column, n.parentNode.state.grid);
+							if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
+								gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
+							} else {
+								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+							}
+						} else {
+							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+						}
+						newState.grid = BitFieldFromgrid(gridOfClonedNode);
+						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces;
+						expansion.add(new Node(newState, n, "West", n.depth + 1, n.pathCost + 1));
+
+					}
+				}
+
+			}
+			if (this.operators[i].equals("Kill")) {
+
+				State newState = n.state.clone();
+				char[][] gridOfClonedNode = gridFromBitField(newState.row, newState.column, newState.grid);
+				if (newState.numberOfDragonGlassPieces > 0) {
+					newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces - 1;
+
+					if (n.state.JonR - 1 >= 0 && gridOfNode[n.state.JonR - 1][n.state.JonC] == 'W') {
+						gridOfClonedNode[n.state.JonR - 1][n.state.JonC] = '.';
+					}
+					if (n.state.JonR + 1 < gridOfNode.length && gridOfNode[n.state.JonR + 1][n.state.JonC] == 'W') {
+						gridOfClonedNode[n.state.JonR + 1][n.state.JonC] = '.';
+					}
+					if (n.state.JonC - 1 >= 0 && gridOfNode[n.state.JonR][n.state.JonC - 1] == 'W') {
+						gridOfClonedNode[n.state.JonR][n.state.JonC - 1] = '.';
+					}
+					if (n.state.JonC + 1 < gridOfNode[0].length
+							&& gridOfNode[n.state.JonR][n.state.JonC + 1] == 'W') {
+
+						gridOfClonedNode[n.state.JonR][n.state.JonC + 1] = '.';
+					}
+					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					expansion.add(new Node(newState, n, "Kill", n.depth + 1, n.pathCost + 1));
+				}
+			}
+
+		}
+		return expansion;
+	}
 
 	public boolean isGoalTest(State s) {
 		char[][] clonedGrid = gridFromBitField(s.row, s.column, s.grid);
