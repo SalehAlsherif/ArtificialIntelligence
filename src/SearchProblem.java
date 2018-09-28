@@ -64,6 +64,8 @@ public class SearchProblem {
 		gridFromBitField(grid.length, grid[0].length, BitFieldFromgrid(grid));
 
 		// Creating a Problem instant
+		//for (int i = 0; i<=47; i++)
+		//	System.out.println(""+i+initialState.grid.get(i));
 		Problem p = new Problem(operators, initialState, goalTest);
 		
 		String gridString = "";
@@ -74,7 +76,9 @@ public class SearchProblem {
 			gridString += "\n";
 		}
 		System.out.println(gridString);
+
 		visualize(GENERAL_SEARCH(p, searchType.BF));
+
 	}
 	// I'm going to assume a bitFeild that better represent the grid the size
 			// of the set is 3*sizeR*sizeC
@@ -244,16 +248,6 @@ public class SearchProblem {
 			for (int i = 0; i < expansion.size(); i++) {
 				Q.add(expansion.get(i));
 			}
-//			System.out.println("Node In Queue "+ count++);
-//			String gridString = "";
-//			for (int i = 0; i < 4; i++) {
-//				for (int k = 0; k < 4; k++) {
-//					gridString += gridFromBitField(4, 4, Q.peek().state.grid)[i][k] + " ";
-//				}
-//				gridString += "\n";
-//			}
-//			System.out.println(gridString);
-//			System.out.println("Number of dragonglass "+Q.peek().state.numberOfDragonGlassPieces+'\n');
 
 		}
 		return null;// Failure
