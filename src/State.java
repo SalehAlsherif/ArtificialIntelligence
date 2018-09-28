@@ -9,6 +9,15 @@ public class State {
 	public State(BitField grid) {
 		this.grid = grid;
 	}
+	
+	public State(BitField grid, int dragonGlass, int jonC, int jonR, int row, int column) {
+		this.grid = grid;
+		this.numberOfDragonGlassPieces = dragonGlass;
+		this.JonC = jonC;
+		this.JonR = jonR;
+		this.row = row;
+		this.column = column;
+	}
 
 	public static char[][] gridFromBitField(int R, int C, BitField b) {
 		char[][] newgrid = new char[R][C];

@@ -28,7 +28,7 @@ public class SearchProblem {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		GenGrid(0, 0, 2, 12);
+		GenGrid(0, 8, 2, 3);
 		// Set of Actions
 		operators[0] = "North";
 
@@ -46,6 +46,7 @@ public class SearchProblem {
 		initialState.JonR = jonRow;
 		initialState.row = grid.length;
 		initialState.column = grid[0].length;
+		initialState.numberOfDragonGlassPieces = 1;
 
 		// goal test is when all w's disappear
 		State clonedState = initialState.clone();
@@ -64,18 +65,22 @@ public class SearchProblem {
 		gridFromBitField(grid.length, grid[0].length, BitFieldFromgrid(grid));
 
 		// Creating a Problem instant
+		//for (int i = 0; i<=47; i++)
+		//	System.out.println(""+i+initialState.grid.get(i));
 		Problem p = new Problem(operators, initialState, goalTest);
-
-		PrintWriter pw = new PrintWriter(System.out);
+		
+		String gridString = "";
 		for (int i = 0; i < grid.length; i++) {
 			for (int j = 0; j < grid[i].length; j++) {
-				pw.print(grid[i][j] + " ");
+				gridString += grid[i][j] + " ";
 			}
-			pw.println("");
+			gridString += "\n";
 		}
-		System.out.println(GENERAL_SEARCH(p, searchType.BF).operator);
-		pw.flush();
-		pw.close();
+		System.out.println(gridString);
+		System.out.println(GENERAL_SEARCH(p, searchType.BF));
+
+
+
 
 	}
 
@@ -200,6 +205,7 @@ public class SearchProblem {
 				i--;
 			}
 		}
+		
 
 	}
 
@@ -210,17 +216,46 @@ public class SearchProblem {
 	}
 
 	public static Node BF(Problem p) {
-
 		Queue<Node> Q = (Queue<Node>) new LinkedList<Node>();
 		Q.add(Make_Node(p.initialState, null, null, 0, 0));
-		while (!((Queue<Node>) Q).isEmpty()) {
+
+		int count = 0;
+		while (!((Queue<Node>) Q).isEmpty()) {;
+
 			Node First = Q.remove();
 			if (p.isGoalTest(First.state)) {
+				System.out.println("Sucess State");
+				String gridString = "";
+				for (int i = 0; i < 4; i++) {
+					for (int k = 0; k < 4; k++) {
+						gridString += gridFromBitField(4, 4, First.state.grid)[i][k] + " ";
+					}
+					gridString += "\n";
+				}
+				System.out.println(gridString);
 				return First;
 			}
 			ArrayList<Node> expansion = p.Expand(First);
-			for (int i = 0; i < expansion.size(); i++)
+			
+			if (expansion.isEmpty()) {
+				System.out.println("No availble moves!");
+				return First;
+			}
+
+			for (int i = 0; i < expansion.size(); i++) {
 				Q.add(expansion.get(i));
+			}
+			System.out.println("Node In Queue "+ count++);
+			String gridString = "";
+			for (int i = 0; i < 4; i++) {
+				for (int k = 0; k < 4; k++) {
+					gridString += gridFromBitField(4, 4, Q.peek().state.grid)[i][k] + " ";
+				}
+				gridString += "\n";
+			}
+			System.out.println(gridString);
+			System.out.println("Number of dragonglass "+Q.peek().state.numberOfDragonGlassPieces+'\n');
+
 		}
 		return null;// Failure
 	}
