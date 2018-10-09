@@ -1,4 +1,14 @@
-public class State {
+
+public  class State {
+//	the class should be abstract with only these atributes 
+//	BitField grid;
+//	int row;
+//	int column;
+//	public State(BitField grid,int row,int column){
+//		this.grid = grid;
+//		this.row=row;
+//		this.column=column;
+//	}
 	BitField grid;
 	int numberOfDragonGlassPieces;
 	int JonC;
@@ -84,4 +94,5 @@ public class State {
 		}
 		return b;
 	}
+	
 }

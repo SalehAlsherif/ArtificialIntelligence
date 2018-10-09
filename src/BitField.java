@@ -6,6 +6,7 @@
  * Initial Developer: H2 Group
  */
 //package org.h2.util;
+// http://www.java2s.com/Code/Java/Language-Basics/Alistofbits.htm
 
 /**
  * A list of bits.
