@@ -1,10 +1,18 @@
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Queue;
+
+enum searchType {
+	DF, BF, UC, ID, GR1, GR2, AS1, AS2
+};
 
 public abstract class Problem {
 	String[] operators;
 	State initialState;
 
-	public Problem(String[] operators, State initialState, State goalTest) {
+	public Problem(String[] operators, State initialState) {
 		this.operators = operators;
 		this.initialState = initialState;
 	}
@@ -16,350 +24,194 @@ public abstract class Problem {
 		return 0;
 	}
 
-//	public abstract ArrayList<Node> Expand(Node n);
-	// State Space or Transition function
-		public ArrayList<Node> Expand(Node n) {
-			char[][] gridOfNode = gridFromBitField(n.state.row, n.state.column, n.state.grid);
-			ArrayList<Node> expansion = new ArrayList<Node>();
-			for (int i = 0; i < this.operators.length; i++) {
-				if (this.operators[i].equals("North")) {
-					if (n.state.JonR - 1 >= 0
-							&& gridOfNode[n.state.JonR - 1][n.state.JonC] == 'D') {
-						State newState = n.state.clone();
-						char[][] gridOfClonedNode = gridFromBitField(newState.row,
-								newState.column, newState.grid);
+	public static Node Make_Node(State initialState, Node parent,
+			String operator, int depth, int pathCost) {
 
-						newState.JonC = n.state.JonC;
-						newState.JonR = n.state.JonR - 1;
+		return new Node(initialState, parent, operator, depth, pathCost);
+	}
 
-						gridOfClonedNode[n.state.JonR - 1][n.state.JonC] = 'J';
-
-
-						if (n.parentNode != null) {
-							char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
-									n.parentNode.state.column, n.parentNode.state.grid);
-							if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
-							} else {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-							}
-						} else {
-							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+	public static Node general_search(Problem p, searchType s) {
+		for (int depth = 0; depth < 15; depth++) {
+			LinkedList<Node> Q = new LinkedList<Node>();
+			Q.add(Make_Node(p.initialState, null, null, 0, 0));
+			switch (s) {
+			case AS1:
+				Q.getFirst().heuristic = p.heuristicCost1(Q.getFirst())
+						+ Q.getFirst().pathCost;
+				break;
+			case AS2:
+				Q.getFirst().heuristic = p.heuristicCost2(Q.getFirst())
+						+ Q.getFirst().pathCost;
+				break;
+			case GR1:
+				Q.getFirst().heuristic = p.heuristicCost1(Q.getFirst());
+				break;
+			case GR2:
+				Q.getFirst().heuristic = p.heuristicCost2(Q.getFirst());
+				break;
+			default:
+				break;
+			}
+			int numberOfExpandedNodes = 0;
+			while (!Q.isEmpty()) {
+				Node First = null;
+				switch (s) {
+				case BF:
+					First = Q.removeFirst();
+					break;
+				case AS1:
+					Q.sort(new Comparator<Node>() {
+						@Override
+						public int compare(Node n1, Node n2) {
+							return n1.heuristic - n2.heuristic;
 						}
-						newState.grid = BitFieldFromgrid(gridOfClonedNode);
-						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
-						expansion.add(new Node(newState, n, "North", n.depth + 1, n.pathCost + 1));
-
-					} else {
-						if (n.state.JonR - 1 >= 0
-								&& gridOfNode[n.state.JonR - 1][n.state.JonC] != 'O'
-								&& gridOfNode[n.state.JonR - 1][n.state.JonC] != 'W') {
-
-							State newState = n.state.clone();
-							char[][] gridOfClonedNode = gridFromBitField(
-									newState.row, newState.column, newState.grid);
-							newState.JonC = n.state.JonC;
-							newState.JonR = n.state.JonR - 1;
-
-
-							gridOfClonedNode[n.state.JonR - 1][n.state.JonC] = 'J';
-							if (n.parentNode != null) {
-								char[][] gridOfClonedParentNode = gridFromBitField(
-										n.parentNode.state.row,
-										n.parentNode.state.column,
-										n.parentNode.state.grid);
-
-								if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
-									gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
-								} else {
-									gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-								}
-							} else {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-							}
-							newState.grid = BitFieldFromgrid(gridOfClonedNode);
-							newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces;
-							expansion.add(new Node(newState, n, "North", n.depth + 1, n.pathCost + 1));
+					});
+					First = Q.removeFirst();
+					break;
+				case AS2:
+					Q.sort(new Comparator<Node>() {
+						@Override
+						public int compare(Node n1, Node n2) {
+							return n1.heuristic - n2.heuristic;
 						}
-					}
+					});
+					First = Q.removeFirst();
+					break;
+				case DF:
+					First = Q.removeLast();
+					break;
+				case GR1:
 
+					Q.sort(new Comparator<Node>() {
+						@Override
+						public int compare(Node n1, Node n2) {
+							return n1.heuristic - n2.heuristic;
+						}
+					});
+					First = Q.removeFirst();
+					break;
+				case GR2:
+					Q.sort(new Comparator<Node>() {
+						@Override
+						public int compare(Node n1, Node n2) {
+							return n1.heuristic - n2.heuristic;
+						}
+					});
+					First = Q.removeFirst();
+					break;
+				case ID:
+					First = Q.removeLast();
+					break;
+				case UC:
+					Q.sort(new Comparator<Node>() {
+						@Override
+						public int compare(Node n1, Node n2) {
+							return n1.pathCost - n2.pathCost;
+						}
+					});
+					First = Q.removeFirst();
+					break;
 				}
-				if (this.operators[i].equals("South")) {
-
-					if (n.state.JonR + 1 < gridOfNode.length
-							&& gridOfNode[n.state.JonR + 1][n.state.JonC] == 'D') {
-						State newState = n.state.clone();
-						char[][] gridOfClonedNode = gridFromBitField(newState.row,
-								newState.column, newState.grid);
-						newState.JonC = n.state.JonC;
-						newState.JonR = n.state.JonR + 1;
-						gridOfClonedNode[n.state.JonR + 1][n.state.JonC] = 'J';
-						if (n.parentNode != null) {
-							char[][] gridOfClonedParentNode = gridFromBitField(
-									n.parentNode.state.row,
-									n.parentNode.state.column,
-									n.parentNode.state.grid);
-
-							if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
-							} else {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-							}
-						} else {
-							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-						}
-						newState.grid = BitFieldFromgrid(gridOfClonedNode);
-						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
-						expansion.add(new Node(newState, n, "South", n.depth + 1, n.pathCost + 1));
-					} else {
-
-						if (n.state.JonR + 1 < gridOfNode.length
-								&& gridOfNode[n.state.JonR + 1][n.state.JonC] != 'O'
-								&& gridOfNode[n.state.JonR + 1][n.state.JonC] != 'W') {
-
-							State newState = n.state.clone();
-							char[][] gridOfClonedNode = gridFromBitField(
-									newState.row, newState.column, newState.grid);
-							newState.JonC = n.state.JonC;
-							newState.JonR = n.state.JonR + 1;
-							gridOfClonedNode[n.state.JonR + 1][n.state.JonC] = 'J';
-							if (n.parentNode != null) {
-								char[][] gridOfClonedParentNode = gridFromBitField(
-										n.parentNode.state.row,
-										n.parentNode.state.column,
-										n.parentNode.state.grid);
-
-								if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
-									gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
-								} else {
-									gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-								}
-							} else {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-							}
-							newState.grid = BitFieldFromgrid(gridOfClonedNode);
-							newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces;
-							expansion.add(new Node(newState, n, "South",
-									n.depth + 1, n.pathCost + 1));
-
-						}
+				if (p.goalTest(First.state)) {
+					switch (s) {
+					case BF:
+						System.out.println("Number Of Expanded Nodes in BF: "
+								+ numberOfExpandedNodes);
+						break;
+					case AS1:
+						System.out.println("Number Of Expanded Nodes in AS1: "
+								+ numberOfExpandedNodes);
+						break;
+					case AS2:
+						System.out.println("Number Of Expanded Nodes in AS2: "
+								+ numberOfExpandedNodes);
+						break;
+					case DF:
+						System.out.println("Number Of Expanded Nodes in DF: "
+								+ numberOfExpandedNodes);
+						First = Q.removeLast();
+						break;
+					case GR1:
+						System.out.println("Number Of Expanded Nodes in GR1: "
+								+ numberOfExpandedNodes);
+						break;
+					case GR2:
+						System.out.println("Number Of Expanded Nodes in GR2: "
+								+ numberOfExpandedNodes);
+						break;
+					case ID:
+						System.out.println("Number Of Expanded Nodes in ID: "
+								+ numberOfExpandedNodes);
+						break;
+					case UC:
+						System.out.println("Number Of Expanded Nodes in UC: "
+								+ numberOfExpandedNodes);
+						break;
 					}
-
+					return First;
 				}
-				if (this.operators[i].equals("East")) {
-					if (n.state.JonC + 1 < gridOfNode[0].length
-							&& gridOfNode[n.state.JonR][n.state.JonC + 1] == 'D') {
+				ArrayList<Node> expansion = p.Expand(First);
+				numberOfExpandedNodes++;
 
-						State newState = n.state.clone();
-						char[][] gridOfClonedNode = gridFromBitField(newState.row,
-								newState.column, newState.grid);
-						newState.JonC = n.state.JonC + 1;
-						newState.JonR = n.state.JonR;
-						gridOfClonedNode[n.state.JonR][n.state.JonC + 1] = 'J';
-
-						if (n.parentNode != null) {
-							char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
-									n.parentNode.state.column, n.parentNode.state.grid);
-							if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D')
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
-							else {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-							}
-						} else {
-							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-						}
-						newState.grid = BitFieldFromgrid(gridOfClonedNode);
-						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
-						expansion.add(new Node(newState, n, "East", n.depth + 1, n.pathCost + 1));
-					} else {
-						if (n.state.JonC + 1 < gridOfNode[0].length
-								&& gridOfNode[n.state.JonR][n.state.JonC + 1] != 'O'
-								&& gridOfNode[n.state.JonR][n.state.JonC + 1] != 'W') {
-							State newState = n.state.clone();
-							
-							char[][] gridOfClonedNode = gridFromBitField(
-									newState.row, newState.column, newState.grid);
-							
-							newState.JonC = n.state.JonC + 1;
-							newState.JonR = n.state.JonR;
-							gridOfClonedNode[n.state.JonR][n.state.JonC + 1] = 'J';
-
-
-							if (n.parentNode != null) {
-								char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
-										n.parentNode.state.column, n.parentNode.state.grid);
-								if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
-									gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
-								} else {
-									gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-								}
-							} else {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-							}
-							newState.grid = BitFieldFromgrid(gridOfClonedNode);
-							newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces;
-							expansion.add(new Node(newState, n, "East", n.depth + 1, n.pathCost + 1));
-						}
-					}
-
+				if (expansion.isEmpty()) {
+					System.out.println("No availble moves!");
+					return First;
 				}
-				if (this.operators[i].equals("West")) {
-
-					if (n.state.JonC - 1 >= 0
-							&& gridOfNode[n.state.JonR ][n.state.JonC- 1] == 'D') {
-						State newState = n.state.clone();
-						char[][] gridOfClonedNode = gridFromBitField(newState.row,
-								newState.column, newState.grid);
-
-						newState.JonC = n.state.JonC - 1;
-						newState.JonR = n.state.JonR;
-						gridOfClonedNode[n.state.JonR][n.state.JonC- 1] = 'J';
-
-						if (n.parentNode != null) {
-							char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
-									n.parentNode.state.column, n.parentNode.state.grid);
-							if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
-							} else {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-							}
-
-						} else {
-							gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
+				// Removing Repeated States
+				LinkedList<Node> newExpansion = new LinkedList<Node>();
+				for (int j = 0; j < expansion.size(); j++) {
+					newExpansion.add(expansion.get(j));
+					for (int k = 0; k < Q.size(); k++)
+						if ((expansion.get(j).state).sameState(Q.get(k).state)) {
+							newExpansion.removeLast();
+							break;
 						}
-						newState.grid = BitFieldFromgrid(gridOfClonedNode);
-						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces + 1;
-						expansion.add(new Node(newState, n, "West", n.depth + 1, n.pathCost + 1));
-					} else {
-						if (n.state.JonC - 1 >= 0
-								&& gridOfNode[n.state.JonR ][n.state.JonC- 1] != 'O'
-								&& gridOfNode[n.state.JonR ][n.state.JonC- 1] != 'W') {
-							State newState = n.state.clone();
-							char[][] gridOfClonedNode = gridFromBitField(
-									newState.row, newState.column, newState.grid);
-							newState.JonC = n.state.JonC - 1;
-							newState.JonR = n.state.JonR;
-							gridOfClonedNode[n.state.JonR][n.state.JonC- 1] = 'J';
-
-							if (n.parentNode != null) {
-								char[][] gridOfClonedParentNode = gridFromBitField(n.parentNode.state.row,
-										n.parentNode.state.column, n.parentNode.state.grid);
-								if (gridOfClonedParentNode[n.state.JonR][n.state.JonC] == 'D') {
-									gridOfClonedNode[n.state.JonR][n.state.JonC] = 'D';
-								} else {
-									gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-								}
-							} else {
-								gridOfClonedNode[n.state.JonR][n.state.JonC] = '.';
-							}
-							newState.grid = BitFieldFromgrid(gridOfClonedNode);
-							newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces;
-							expansion.add(new Node(newState, n, "West", n.depth + 1, n.pathCost + 1));
-
-						}
-					}
-
 				}
-				if (this.operators[i].equals("Kill")) {
+				for (int i = 0; i < newExpansion.size(); i++) {
 
-					State newState = n.state.clone();
-					char[][] gridOfClonedNode = gridFromBitField(newState.row, newState.column, newState.grid);
-					if (newState.numberOfDragonGlassPieces > 0) {
-						newState.numberOfDragonGlassPieces = n.state.numberOfDragonGlassPieces - 1;
-
-						if (n.state.JonR - 1 >= 0 && gridOfNode[n.state.JonR - 1][n.state.JonC] == 'W') {
-							gridOfClonedNode[n.state.JonR - 1][n.state.JonC] = '.';
-						}
-						if (n.state.JonR + 1 < gridOfNode.length && gridOfNode[n.state.JonR + 1][n.state.JonC] == 'W') {
-							gridOfClonedNode[n.state.JonR + 1][n.state.JonC] = '.';
-						}
-						if (n.state.JonC - 1 >= 0 && gridOfNode[n.state.JonR][n.state.JonC - 1] == 'W') {
-							gridOfClonedNode[n.state.JonR][n.state.JonC - 1] = '.';
-						}
-						if (n.state.JonC + 1 < gridOfNode[0].length
-								&& gridOfNode[n.state.JonR][n.state.JonC + 1] == 'W') {
-
-							gridOfClonedNode[n.state.JonR][n.state.JonC + 1] = '.';
-						}
-						newState.grid = BitFieldFromgrid(gridOfClonedNode);
-						expansion.add(new Node(newState, n, "Kill", n.depth + 1, n.pathCost + 1));
+					switch (s) {
+					case AS1:
+						newExpansion.get(i).heuristic = p
+								.heuristicCost1(newExpansion.get(i))
+								+ newExpansion.get(i).pathCost;
+						break;
+					case AS2:
+						newExpansion.get(i).heuristic = p
+								.heuristicCost2(newExpansion.get(i))
+								+ newExpansion.get(i).pathCost;
+						break;
+					case GR1:
+						newExpansion.get(i).heuristic = p
+								.heuristicCost1(newExpansion.get(i));
+						break;
+					case GR2:
+						newExpansion.get(i).heuristic = p
+								.heuristicCost2(newExpansion.get(i));
+						break;
+					default:
+						break;
 					}
+
+					if (s.equals(searchType.ID)) {
+						if (newExpansion.get(i).depth <= depth) {
+							Q.add(newExpansion.get(i));
+						}
+					} else {
+						Q.add(newExpansion.get(i));
+					}
+
 				}
 
 			}
-			return expansion;
 		}
+		return null;// Failure
+	}
+
+	public abstract ArrayList<Node> Expand(Node n);
 
 	public abstract int heuristicCost1(Node n);
 
 	public abstract int heuristicCost2(Node n);
-
-	// I'm going to assume a bitFeild that better represent the grid the size
-	// of the set is 3*sizeR*sizeC
-	// I will consider encoding for the empty cell as 000
-	// jon snow as 001
-	// D as 010
-	// W as 011
-	// O as 100
-
-	// Decoding
-	public static char[][] gridFromBitField(int R, int C, BitField b) {
-		char[][] newgrid = new char[R][C];
-		int size = newgrid.length * newgrid[0].length * 3;
-		for (int i = 0; i < size; i += 3) {
-
-			if (!b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
-				newgrid[(i / 3) / C][(i / 3) % C] = '.';
-			} else if (!b.get(i) && !b.get(i + 1) && b.get(i + 2)) {
-
-				newgrid[(i / 3) / C][(i / 3) % C] = 'J';
-			} else if (!b.get(i) && b.get(i + 1) && !b.get(i + 2)) {
-				newgrid[(i / 3) / C][(i / 3) % C] = 'D';
-			} else if (!b.get(i) && b.get(i + 1) && b.get(i + 2)) {
-				newgrid[(i / 3) / C][(i / 3) % C] = 'W';
-			} else if (b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
-				newgrid[(i / 3) / C][(i / 3) % C] = 'O';
-			} else
-				newgrid[(i / 3) / C][(i / 3) % C] = 'X';
-
-		}
-		return newgrid;
-	}
-
-	// Encoding
-	public static BitField BitFieldFromgrid(char[][] targetGrid) {
-		BitField b = new BitField(3);
-		for (int i = 0; i < targetGrid.length; i++) {
-			for (int j = 0; j < targetGrid[i].length; j++) {
-				if (targetGrid[i][j] == '.') {
-					b.clear(i * 3 * targetGrid[0].length + j * 3);
-					b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
-					b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
-				}
-				if (targetGrid[i][j] == 'J') {
-					b.clear(i * 3 * targetGrid[0].length + j * 3);
-					b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
-					b.set(i * 3 * targetGrid[0].length + j * 3 + 2);
-				}
-				if (targetGrid[i][j] == 'D') {
-					b.clear(i * 3 * targetGrid[0].length + j * 3);
-					b.set(i * 3 * targetGrid[0].length + j * 3 + 1);
-					b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
-				}
-				if (targetGrid[i][j] == 'W') {
-					b.clear(i * 3 * targetGrid[0].length * 3 + j);
-					b.set(i * 3 * targetGrid[0].length + j * 3 + 1);
-					b.set(i * 3 * targetGrid[0].length + j * 3 + 2);
-				}
-				if (targetGrid[i][j] == 'O') {
-					b.set(i * 3 * targetGrid[0].length + j * 3);
-					b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
-					b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
-				}
-			}
-		}
-		return b;
-	}
 
 	public abstract boolean goalTest(State s);
 
