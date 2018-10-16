@@ -19,7 +19,7 @@ public class SaveWestros extends Problem {
 		String[] operators = new String[5];
 		// GenGrid(int maxLimitGrid, int maxLimitWhiteWalkers,
 		// int maxLimitDragonStone, int maxLimitObstacle)
-		GenGrid(0, 4, 6, 8);
+		GenGrid(3, 4, 6, 8);
 		// Set of Actions
 		operators[0] = "North";
 
@@ -273,8 +273,40 @@ public class SaveWestros extends Problem {
 											* ((SaveWestrosState) n.state).column
 											/ 3;
 								} else {
-									value += ((SaveWestrosState) n.state).row
-											* ((SaveWestrosState) n.state).column;
+
+									if (i - 2 >= 0 && grid[i - 2][j] == 'W') {
+										value += ((SaveWestrosState) n.state).row
+												* ((SaveWestrosState) n.state).column
+												/ 3;
+									} else {
+										if (i + 2 < grid.length
+												&& grid[i + 2][j] == 'W') {
+											value += ((SaveWestrosState) n.state).row
+													* ((SaveWestrosState) n.state).column
+													/ 3;
+										} else {
+											if (j - 2 >= 0
+													&& grid[i][j - 2] == 'W') {
+												value += ((SaveWestrosState) n.state).row
+														* ((SaveWestrosState) n.state).column
+														/ 3;
+											} else {
+												if (j + 2 < grid[0].length
+														&& grid[i][j + 2] == 'W') {
+													value += ((SaveWestrosState) n.state).row
+															* ((SaveWestrosState) n.state).column
+															/ 3;
+												} else {
+													value += ((SaveWestrosState) n.state).row
+															* ((SaveWestrosState) n.state).column;
+												}
+
+											}
+
+										}
+
+									}
+
 								}
 							}
 						}
