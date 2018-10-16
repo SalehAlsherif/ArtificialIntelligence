@@ -102,10 +102,11 @@ public class SaveWestros extends Problem {
 		// Uninformed
 		// search((sv), searchType.GR1, false);
 		// search((sv), searchType.GR2, false);
-//		search((sv), searchType.BF, false);
+		search((sv), searchType.BF, false);
 		search((sv), searchType.AS1, false);
-//		search((sv), searchType.UC, false);
-//		search((sv), searchType.ID, false);
+		search((sv), searchType.AS2, false);
+		search((sv), searchType.UC, false);
+		search((sv), searchType.ID, false);
 		// search((sv), searchType.AS2, false);
 
 	}
@@ -236,7 +237,8 @@ public class SaveWestros extends Problem {
 					value++;
 			}
 		}
-		return value;
+		return value * ((SaveWestrosState) n.state).row
+				* ((SaveWestrosState) n.state).column / 3;
 	}
 
 	public int heuristicCost2(Node n) {
@@ -244,13 +246,44 @@ public class SaveWestros extends Problem {
 				((SaveWestrosState) n.state).column,
 				((SaveWestrosState) n.state).grid);
 		int value = 0;
-
 		for (int i = 0; i < grid.length; i++) {
 			for (int j = 0; j < grid[0].length; j++) {
-				if (grid[i][j] == 'W')
+				if (grid[i][j] == 'W') {
 					value++;
+					if (i + 1 < grid.length && j + 1 < grid[0].length
+							&& grid[i + 1][j + 1] == 'W') {
+						value += ((SaveWestrosState) n.state).row
+								* ((SaveWestrosState) n.state).column / 3;
+					} else {
+						if (i + 1 < grid.length && j - 1 >= 0
+								&& grid[i + 1][j - 1] == 'W') {
+							value += ((SaveWestrosState) n.state).row
+									* ((SaveWestrosState) n.state).column / 3;
+						} else {
+							if (i - 1 >= 0 && j + 1 < grid[0].length
+									&& grid[i - 1][j + 1] == 'W') {
+								value += ((SaveWestrosState) n.state).row
+										* ((SaveWestrosState) n.state).column
+										/ 3;
+							} else {
+
+								if (i - 1 >= 0 && j - 1 >= 0
+										&& grid[i - 1][j - 1] == 'W') {
+									value += ((SaveWestrosState) n.state).row
+											* ((SaveWestrosState) n.state).column
+											/ 3;
+								} else {
+									value += ((SaveWestrosState) n.state).row
+											* ((SaveWestrosState) n.state).column;
+								}
+							}
+						}
+					}
+
+				}
 			}
 		}
+
 		return value;
 	}
 
@@ -609,7 +642,7 @@ public class SaveWestros extends Problem {
 					}
 					newState.grid = BitFieldFromgrid(gridOfClonedNode);
 					expansion.add(new Node(newState, n, "Kill", n.depth + 1,
-							n.pathCost + (newState.row*newState.column)));
+							n.pathCost + (newState.row * newState.column)));
 				}
 			}
 
@@ -639,62 +672,62 @@ public class SaveWestros extends Problem {
 	// O as 100
 
 	// Decoding
-		public static char[][] gridFromBitField(int R, int C, BitField b) {
-			char[][] newgrid = new char[R][C];
-			int size = newgrid.length * newgrid[0].length * 3;
-			for (int i = 0; i < size; i += 3) {
+	public static char[][] gridFromBitField(int R, int C, BitField b) {
+		char[][] newgrid = new char[R][C];
+		int size = newgrid.length * newgrid[0].length * 3;
+		for (int i = 0; i < size; i += 3) {
 
-				if (!b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
-					newgrid[(i / 3) / C][(i / 3) % C] = '.';
-				} else if (!b.get(i) && !b.get(i + 1) && b.get(i + 2)) {
+			if (!b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
+				newgrid[(i / 3) / C][(i / 3) % C] = '.';
+			} else if (!b.get(i) && !b.get(i + 1) && b.get(i + 2)) {
 
-					newgrid[(i / 3) / C][(i / 3) % C] = 'J';
-				} else if (!b.get(i) && b.get(i + 1) && !b.get(i + 2)) {
-					newgrid[(i / 3) / C][(i / 3) % C] = 'D';
-				} else if (!b.get(i) && b.get(i + 1) && b.get(i + 2)) {
-					newgrid[(i / 3) / C][(i / 3) % C] = 'W';
-				} else if (b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
-					newgrid[(i / 3) / C][(i / 3) % C] = 'O';
-				} else
-					newgrid[(i / 3) / C][(i / 3) % C] = 'X';
+				newgrid[(i / 3) / C][(i / 3) % C] = 'J';
+			} else if (!b.get(i) && b.get(i + 1) && !b.get(i + 2)) {
+				newgrid[(i / 3) / C][(i / 3) % C] = 'D';
+			} else if (!b.get(i) && b.get(i + 1) && b.get(i + 2)) {
+				newgrid[(i / 3) / C][(i / 3) % C] = 'W';
+			} else if (b.get(i) && !b.get(i + 1) && !b.get(i + 2)) {
+				newgrid[(i / 3) / C][(i / 3) % C] = 'O';
+			} else
+				newgrid[(i / 3) / C][(i / 3) % C] = 'X';
 
-			}
-			return newgrid;
 		}
+		return newgrid;
+	}
 
-		// Encoding
-		public static BitField BitFieldFromgrid(char[][] targetGrid) {
-			BitField b = new BitField(3);
-			for (int i = 0; i < targetGrid.length; i++) {
-				for (int j = 0; j < targetGrid[i].length; j++) {
-					if (targetGrid[i][j] == '.') {
-						b.clear(i * 3 * targetGrid[0].length + j * 3);
-						b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
-						b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
-					}
-					if (targetGrid[i][j] == 'J') {
-						b.clear(i * 3 * targetGrid[0].length + j * 3);
-						b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
-						b.set(i * 3 * targetGrid[0].length + j * 3 + 2);
-					}
-					if (targetGrid[i][j] == 'D') {
-						b.clear(i * 3 * targetGrid[0].length + j * 3);
-						b.set(i * 3 * targetGrid[0].length + j * 3 + 1);
-						b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
-					}
-					if (targetGrid[i][j] == 'W') {
-						b.clear(i * 3 * targetGrid[0].length * 3 + j);
-						b.set(i * 3 * targetGrid[0].length + j * 3 + 1);
-						b.set(i * 3 * targetGrid[0].length + j * 3 + 2);
-					}
-					if (targetGrid[i][j] == 'O') {
-						b.set(i * 3 * targetGrid[0].length + j * 3);
-						b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
-						b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
-					}
+	// Encoding
+	public static BitField BitFieldFromgrid(char[][] targetGrid) {
+		BitField b = new BitField(3);
+		for (int i = 0; i < targetGrid.length; i++) {
+			for (int j = 0; j < targetGrid[i].length; j++) {
+				if (targetGrid[i][j] == '.') {
+					b.clear(i * 3 * targetGrid[0].length + j * 3);
+					b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
+					b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
+				}
+				if (targetGrid[i][j] == 'J') {
+					b.clear(i * 3 * targetGrid[0].length + j * 3);
+					b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
+					b.set(i * 3 * targetGrid[0].length + j * 3 + 2);
+				}
+				if (targetGrid[i][j] == 'D') {
+					b.clear(i * 3 * targetGrid[0].length + j * 3);
+					b.set(i * 3 * targetGrid[0].length + j * 3 + 1);
+					b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
+				}
+				if (targetGrid[i][j] == 'W') {
+					b.clear(i * 3 * targetGrid[0].length * 3 + j);
+					b.set(i * 3 * targetGrid[0].length + j * 3 + 1);
+					b.set(i * 3 * targetGrid[0].length + j * 3 + 2);
+				}
+				if (targetGrid[i][j] == 'O') {
+					b.set(i * 3 * targetGrid[0].length + j * 3);
+					b.clear(i * 3 * targetGrid[0].length + j * 3 + 1);
+					b.clear(i * 3 * targetGrid[0].length + j * 3 + 2);
 				}
 			}
-			return b;
 		}
+		return b;
+	}
 
 }
