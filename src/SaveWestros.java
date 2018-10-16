@@ -19,7 +19,7 @@ public class SaveWestros extends Problem {
 		String[] operators = new String[5];
 		// GenGrid(int maxLimitGrid, int maxLimitWhiteWalkers,
 		// int maxLimitDragonStone, int maxLimitObstacle)
-		GenGrid(3, 4, 6, 8);
+		GenGrid(0, 4, 6, 8);
 		// Set of Actions
 		operators[0] = "North";
 
@@ -92,22 +92,20 @@ public class SaveWestros extends Problem {
 		grid = sv.grid;
 
 		// Informed
+		// search((sv), searchType.GR1, false);
+		// search((sv), searchType.GR2, false);
+		// search((sv), searchType.AS1, false);
+		search((sv), searchType.AS2, true);
+
+		// Uninformed
 		// search((sv), searchType.BF, false);
 		// search((sv), searchType.DF, false);
 		// search((sv), searchType.UC, false);
-		// search((sv), searchType.ID, false);
+
 		// I made the Maximum depth as 15 as
 		// it's longest plan action I can
 		// imagine
-		// Uninformed
-		// search((sv), searchType.GR1, false);
-		// search((sv), searchType.GR2, false);
-		search((sv), searchType.BF, false);
-		search((sv), searchType.AS1, false);
-		search((sv), searchType.AS2, false);
-		search((sv), searchType.UC, false);
-		search((sv), searchType.ID, false);
-		// search((sv), searchType.AS2, false);
+		// search((sv), searchType.ID, false);
 
 	}
 
