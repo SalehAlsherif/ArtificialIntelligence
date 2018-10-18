@@ -249,48 +249,48 @@ public class SaveWestros extends Problem {
 				if (grid[i][j] == 'W') {
 					value++;
 					if (i + 1 < grid.length && j + 1 < grid[0].length
-							&& grid[i + 1][j + 1] == 'W') {
+							&& grid[i + 1][j + 1] == 'W' && !(grid[i+1][j] == 'O' && grid[i][j+1] == 'O')) {
 						value += ((SaveWestrosState) n.state).row
 								* ((SaveWestrosState) n.state).column / 3;
 					} else {
 						if (i + 1 < grid.length && j - 1 >= 0
-								&& grid[i + 1][j - 1] == 'W') {
+								&& grid[i + 1][j - 1] == 'W' && !(grid[i+1][j] == 'O' && grid[i][j-1] == 'O')) {
 							value += ((SaveWestrosState) n.state).row
 									* ((SaveWestrosState) n.state).column / 3;
 						} else {
 							if (i - 1 >= 0 && j + 1 < grid[0].length
-									&& grid[i - 1][j + 1] == 'W') {
+									&& grid[i - 1][j + 1] == 'W' && !(grid[i-1][j] == 'O' && grid[i][j+1] == 'O')) {
 								value += ((SaveWestrosState) n.state).row
 										* ((SaveWestrosState) n.state).column
 										/ 3;
 							} else {
 
 								if (i - 1 >= 0 && j - 1 >= 0
-										&& grid[i - 1][j - 1] == 'W') {
+										&& grid[i - 1][j - 1] == 'W' && !(grid[i-1][j] == 'O' && grid[i][j-1] == 'O')) {
 									value += ((SaveWestrosState) n.state).row
 											* ((SaveWestrosState) n.state).column
 											/ 3;
 								} else {
 
-									if (i - 2 >= 0 && grid[i - 2][j] == 'W') {
+									if (i - 2 >= 0 && grid[i - 2][j] == 'W' && !(grid[i-1][j] == 'O')) {
 										value += ((SaveWestrosState) n.state).row
 												* ((SaveWestrosState) n.state).column
 												/ 3;
 									} else {
 										if (i + 2 < grid.length
-												&& grid[i + 2][j] == 'W') {
+												&& grid[i + 2][j] == 'W' && !(grid[i+1][j] == 'O')) {
 											value += ((SaveWestrosState) n.state).row
 													* ((SaveWestrosState) n.state).column
 													/ 3;
 										} else {
 											if (j - 2 >= 0
-													&& grid[i][j - 2] == 'W') {
+													&& grid[i][j - 2] == 'W' && !(grid[i][j-1] == 'O')) {
 												value += ((SaveWestrosState) n.state).row
 														* ((SaveWestrosState) n.state).column
 														/ 3;
 											} else {
 												if (j + 2 < grid[0].length
-														&& grid[i][j + 2] == 'W') {
+														&& grid[i][j + 2] == 'W' && !(grid[i][j+1] == 'O')) {
 													value += ((SaveWestrosState) n.state).row
 															* ((SaveWestrosState) n.state).column
 															/ 3;
