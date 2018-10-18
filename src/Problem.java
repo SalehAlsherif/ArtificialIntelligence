@@ -11,10 +11,12 @@ enum searchType {
 public abstract class Problem {
 	String[] operators;
 	State initialState;
+	static LinkedList<Node> uniqueNodes;
 
 	public Problem(String[] operators, State initialState) {
 		this.operators = operators;
 		this.initialState = initialState;
+		uniqueNodes = new LinkedList<Node>();
 	}
 
 	public static int pathCost(String actions) {
@@ -34,6 +36,7 @@ public abstract class Problem {
 		for (int depth = 0; depth < 15; depth++) {
 			LinkedList<Node> Q = new LinkedList<Node>();
 			Q.add(Make_Node(p.initialState, null, null, 0, 0));
+			p.uniqueNodes.add(Q.getLast());
 			switch (s) {
 			case AS1:
 				Q.getFirst().heuristic = p.heuristicCost1(Q.getFirst())
@@ -161,8 +164,8 @@ public abstract class Problem {
 				LinkedList<Node> newExpansion = new LinkedList<Node>();
 				for (int j = 0; j < expansion.size(); j++) {
 					newExpansion.add(expansion.get(j));
-					for (int k = 0; k < Q.size(); k++)
-						if ((expansion.get(j).state).sameState(Q.get(k).state)) {
+					for (int k = 0; k < p.uniqueNodes.size(); k++)
+						if ((expansion.get(j).state).sameState(p.uniqueNodes.get(k).state)) {
 							newExpansion.removeLast();
 							break;
 						}
@@ -195,9 +198,11 @@ public abstract class Problem {
 					if (s.equals(searchType.ID)) {
 						if (newExpansion.get(i).depth <= depth) {
 							Q.add(newExpansion.get(i));
+							p.uniqueNodes.add(Q.getLast());
 						}
 					} else {
 						Q.add(newExpansion.get(i));
+						p.uniqueNodes.add(Q.getLast());
 					}
 
 				}

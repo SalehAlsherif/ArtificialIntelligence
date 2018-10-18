@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 public class SaveWestros extends Problem {
@@ -19,7 +20,7 @@ public class SaveWestros extends Problem {
 		String[] operators = new String[5];
 		// GenGrid(int maxLimitGrid, int maxLimitWhiteWalkers,
 		// int maxLimitDragonStone, int maxLimitObstacle)
-		GenGrid(0, 4, 6, 8);
+		GenGrid(0, 4, 1, 8);
 		// Set of Actions
 		operators[0] = "North";
 
@@ -111,6 +112,10 @@ public class SaveWestros extends Problem {
 
 	public static void search(Problem p, searchType s, boolean visualize) {
 		Node n = general_search(p, s);
+		if (n == null) {
+			System.out.println("Goal unreachable!");
+			return;
+		}
 		System.out.println("Path Cost: " + n.pathCost);
 		System.out.print("Action Plan: ");
 		String res = "";
@@ -371,7 +376,6 @@ public class SaveWestros extends Problem {
 				i--;
 			}
 		}
-
 	}
 
 	// State Space or Transition function
@@ -410,6 +414,7 @@ public class SaveWestros extends Problem {
 						gridOfClonedNode[((SaveWestrosState) n.state).JonR][((SaveWestrosState) n.state).JonC] = '.';
 					}
 					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					if (((SaveWestrosState) n.state).numberOfDragonGlassPieces < 9)
 					newState.numberOfDragonGlassPieces = ((SaveWestrosState) n.state).numberOfDragonGlassPieces + 1;
 					expansion.add(new Node(newState, n, "North", n.depth + 1,
 							n.pathCost + 1));
@@ -475,6 +480,7 @@ public class SaveWestros extends Problem {
 						gridOfClonedNode[((SaveWestrosState) n.state).JonR][((SaveWestrosState) n.state).JonC] = '.';
 					}
 					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					if (((SaveWestrosState) n.state).numberOfDragonGlassPieces < 9)
 					newState.numberOfDragonGlassPieces = ((SaveWestrosState) n.state).numberOfDragonGlassPieces + 1;
 					expansion.add(new Node(newState, n, "South", n.depth + 1,
 							n.pathCost + 1));
@@ -540,6 +546,7 @@ public class SaveWestros extends Problem {
 						gridOfClonedNode[((SaveWestrosState) n.state).JonR][((SaveWestrosState) n.state).JonC] = '.';
 					}
 					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					if (((SaveWestrosState) n.state).numberOfDragonGlassPieces < 9)
 					newState.numberOfDragonGlassPieces = ((SaveWestrosState) n.state).numberOfDragonGlassPieces + 1;
 					expansion.add(new Node(newState, n, "East", n.depth + 1,
 							n.pathCost + 1));
@@ -607,6 +614,7 @@ public class SaveWestros extends Problem {
 						gridOfClonedNode[((SaveWestrosState) n.state).JonR][((SaveWestrosState) n.state).JonC] = '.';
 					}
 					newState.grid = BitFieldFromgrid(gridOfClonedNode);
+					if (((SaveWestrosState) n.state).numberOfDragonGlassPieces < 9)
 					newState.numberOfDragonGlassPieces = ((SaveWestrosState) n.state).numberOfDragonGlassPieces + 1;
 					expansion.add(new Node(newState, n, "West", n.depth + 1,
 							n.pathCost + 1));
